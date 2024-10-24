@@ -21,5 +21,13 @@ namespace BulkyWeb.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public IActionResult Create(Category obj)
+        {
+            this._db.Categories.Add(obj); //operation being executed
+            this._db.SaveChanges(); // save to database
+            return RedirectToAction("Index"); // (Action, Controller)
+        }
     }
 }
