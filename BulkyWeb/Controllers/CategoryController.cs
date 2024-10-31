@@ -17,6 +17,7 @@ namespace BulkyWeb.Controllers
             return View(objCaterogryList);
         }
 
+
         public IActionResult Create()
         {
             return View();
@@ -25,9 +26,54 @@ namespace BulkyWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-            this._db.Categories.Add(obj); //operation being executed
-            this._db.SaveChanges(); // save to database
-            return RedirectToAction("Index"); // (Action, Controller)
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("DisplayOrder", "The Display Order cannot exactly match the Name.");
+            }
+            //if (obj.Name.ToLower() == "test")
+            //{
+            //    ModelState.AddModelError("", "Test is an invalid value.");
+            //}
+            if (ModelState.IsValid)
+            {
+                this._db.Categories.Add(obj); //operation being executed
+                this._db.SaveChanges(); // save to database
+                return RedirectToAction("Index"); // (Action, Controller)
+            }
+            return View();
         }
+
+        public IActionResult Edit(int? Id)
+        {
+            if (Id == null || Id == 0) 
+            {
+                return NotFound();
+            }
+            
+            
+            Category? categoryFromDb = this._db.Categories.Find(Id);
+            //Category? categoryFromDb1 = this._db.Categories.FirstOrDefault(u=>u.Id == categoryId);
+            //Category? categoryFromDb2 = this._db.Categories.Where(u => u.Id == categoryId).FirstOrDefault();
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category obj)
+        {
+
+            if (ModelState.IsValid)
+            {
+                this._db.Categories.Update(obj); //operation being executed
+                this._db.SaveChanges(); // save to database
+                return RedirectToAction("Index"); // (Action, Controller)
+            }
+            return View();
+        }
+
+
     }
 }
