@@ -38,6 +38,7 @@ namespace BulkyWeb.Controllers
             {
                 this._db.Categories.Add(obj); //operation being executed
                 this._db.SaveChanges(); // save to database
+                TempData["success"] = "Category created successfully!";
                 return RedirectToAction("Index"); // (Action, Controller)
             }
             return View();
@@ -69,9 +70,42 @@ namespace BulkyWeb.Controllers
             {
                 this._db.Categories.Update(obj); //operation being executed
                 this._db.SaveChanges(); // save to database
+                TempData["success"] = "Category updated successfully!";
                 return RedirectToAction("Index"); // (Action, Controller)
             }
             return View();
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+
+            Category? categoryFromDb = this._db.Categories.Find(id);
+            //Category? categoryFromDb1 = this._db.Categories.FirstOrDefault(u=>u.Id == categoryId);
+            //Category? categoryFromDb2 = this._db.Categories.Where(u => u.Id == categoryId).FirstOrDefault();
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePOST(int? id)
+        {
+            Category? categoryFromDb = this._db.Categories.Find(id);
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            this._db.Categories.Remove(categoryFromDb);
+            this._db.SaveChanges();
+            TempData["success"] = "Category deleted successfully!";
+            return RedirectToAction("Index");
         }
 
 
